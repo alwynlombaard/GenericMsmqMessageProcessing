@@ -30,8 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="ReallySimpleEventing">
+      <HintPath>..\packages\ReallySimpleEventing.1.2.0\lib\net45\ReallySimpleEventing.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,8 +46,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="IMessageHandler.cs" />
+    <Compile Include="IMessageProccessorCollection.cs" />
+    <Compile Include="IMessageProcessor.cs" />
+    <Compile Include="IMessageQueueInbound.cs" />
+    <Compile Include="IMessageQueueOutbound.cs" />
+    <Compile Include="MessageHandler.cs" />
+    <Compile Include="MessageProccessorCollection.cs" />
+    <Compile Include="Msmq\MsmqMessageProcessor.cs" />
+    <Compile Include="Msmq\MsmqMessageQueueInbound.cs" />
+    <Compile Include="Msmq\MsmqMessageQueueOutbound.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

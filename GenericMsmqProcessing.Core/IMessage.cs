@@ -1,6 +1,6 @@
 ﻿namespace GenericMsmqProcessing.Core
 {
-    public class Class1
+    public interface IMessage
     {
     }
 }
