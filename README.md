@@ -7,7 +7,7 @@ This implementation is non transactional. I have used it in a scenario to record
 Usage
 -----
 
-Declare a messsage to process.
+Declare a message to process.
 
 ```C#
 class MyMessage : IMessage
@@ -19,15 +19,15 @@ class MyMessage : IMessage
 Declare a Handler for it (see https://github.com/davidwhitney/ReallySimpleEventing)
 
 ```C#
-class MyMessageHandler : IHandle<Message>
+class MyMessageHandler : IHandle<MyMessage>
 {
-	public void Handle(Message message)
+	public void Handle(MyMessage message)
 	{
 		//handle your message here
 		...
 	}
 	
-	 public void OnError(Message message, Exception ex)
+	public void OnError(MyMessage message, Exception ex)
 	{
 		//handle your errors here
 		...
@@ -55,7 +55,7 @@ try
 {
 	var queue = new MsmqMessageQueueOutbound<MyMessage>();
 	var message = new Message();
-	donationQueue.Send(message);
+	queue.Send(message);
 }
 catch (Exception ex)...
 ``` 
