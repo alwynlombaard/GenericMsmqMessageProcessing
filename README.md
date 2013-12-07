@@ -60,8 +60,28 @@ try
 catch (Exception ex)...
 ``` 
 
+###Container setup###
+see https://github.com/davidwhitney/ReallySimpleEventing for setting up ReallySimpleEventing
 
+Ninject example bindings:
 
+####MessageProcessor####
+```C#
+Bind(typeof (IMessageQueueInbound<>))
+.To(typeof (MsmqMessageQueueInbound<>));
+
+Bind(typeof(IMessageHandler<>))
+.To(typeof(MessageHandler<>));
+
+Bind<ILog>()
+.ToMethod(x =>
+{
+	var type = x.Request.ParentRequest != null 
+		? x.Request.ParentRequest.Service 
+		: x.Request.Service;
+	return LogManager.GetLogger(type);
+});
+```
 
 
 Based on Msmq code by https://github.com/michaellperry
