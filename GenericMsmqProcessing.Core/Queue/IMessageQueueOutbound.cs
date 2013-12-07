@@ -1,4 +1,4 @@
-﻿namespace GenericMsmqProcessing.Core
+﻿namespace GenericMsmqProcessing.Core.Queue
 {
     public interface IMessageQueueOutbound<in T>
     {

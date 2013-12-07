@@ -1,5 +1,6 @@
 ﻿using AutoMoq;
 using GenericMsmqProcessing.Core;
+using GenericMsmqProcessing.Core.MessageHandler;
 using Moq;
 using NUnit.Framework;
 using ReallySimpleEventing;

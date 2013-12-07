@@ -1,7 +1,7 @@
 ﻿using log4net;
 using ReallySimpleEventing;
 
-namespace GenericMsmqProcessing.Core
+namespace GenericMsmqProcessing.Core.MessageHandler
 {
     public class MessageHandler<T> : IMessageHandler<T>
     {

@@ -2,7 +2,7 @@
 using System.Messaging;
 using log4net;
 
-namespace GenericMsmqProcessing.Core.Msmq
+namespace GenericMsmqProcessing.Core.Queue.Msmq
 {
     public class MsmqMessageQueueInbound<T> : IMessageQueueInbound<T>
     {
@@ -16,9 +16,9 @@ namespace GenericMsmqProcessing.Core.Msmq
         {
             _log = log;
             _path = @".\private$\" + typeof(T).FullName;
-            if (!MessageQueue.Exists(_path))
+            if (!System.Messaging.MessageQueue.Exists(_path))
             {
-                MessageQueue.Create(_path, transactional: false);
+                System.Messaging.MessageQueue.Create(_path, transactional: false);
             }
         }
 
@@ -26,7 +26,7 @@ namespace GenericMsmqProcessing.Core.Msmq
         {
             try
             {
-                using (var queue = new MessageQueue(_path))
+                using (var queue = new System.Messaging.MessageQueue(_path))
                 {
                     var msmqMessage = queue.Receive(_timeout, MessageQueueTransactionType.Automatic);
                     if (msmqMessage == null)

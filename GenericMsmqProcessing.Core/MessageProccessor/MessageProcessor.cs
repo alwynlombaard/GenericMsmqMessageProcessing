@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
+using GenericMsmqProcessing.Core.MessageHandler;
+using GenericMsmqProcessing.Core.Queue;
 using log4net;
 
-namespace GenericMsmqProcessing.Core
+namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
     {

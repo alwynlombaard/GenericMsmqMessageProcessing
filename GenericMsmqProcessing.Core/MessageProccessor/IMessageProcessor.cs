@@ -1,4 +1,4 @@
-﻿namespace GenericMsmqProcessing.Core
+﻿namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public interface IMessageProcessor<in T> : IMessageProcessor
     {

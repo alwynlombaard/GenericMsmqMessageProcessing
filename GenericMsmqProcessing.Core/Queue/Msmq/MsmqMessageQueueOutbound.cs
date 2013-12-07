@@ -1,6 +1,6 @@
 ﻿using System.Messaging;
 
-namespace GenericMsmqProcessing.Core.Msmq
+namespace GenericMsmqProcessing.Core.Queue.Msmq
 {
     public class MsmqMessageQueueOutbound<T> : IMessageQueueOutbound<T>
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GenericMsmqProcessing.Core
+namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public class MessageProccessorCollection : List<IMessageProcessor>,  IMessageProccessorCollection
     {
