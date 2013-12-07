@@ -19,7 +19,7 @@ class MyMessage : IMessage
 Declare a Handler for it (see https://github.com/davidwhitney/ReallySimpleEventing)
 
 ```C#
-class CharityDonationListener : IHandle<Message>
+class MyMessageHandler : IHandle<Message>
 {
 	public void Handle(Message message)
 	{
