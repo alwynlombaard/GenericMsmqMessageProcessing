@@ -1,2 +1,2 @@
-GenericMsmqMessageProcessing
+Generic Msmq Message Processing
 ============================
