@@ -60,7 +60,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
 
         [Test]
-        public void MsmqMessageProcessorHandlesInboundMessage()
+        public void MessageProcessorWithServiceLocatorHandlesInboundMessage()
         {
 
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
@@ -73,6 +73,22 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
             
+        }
+
+        [Test]
+        public void MessageProcessorHandlesInboundMessage()
+        {
+
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+               .ReturnsInOrder(false, true, false);
+
+            var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_log.Object, _messageQueue.Object, _messageHandler.Object);
+            msmqProcessor.Start();
+            Thread.Sleep(100);
+            msmqProcessor.Stop();
+
+            _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
+
         }
 
 

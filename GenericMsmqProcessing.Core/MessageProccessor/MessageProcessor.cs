@@ -15,13 +15,24 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         private readonly Thread _thread;
         private readonly IMessageHandler<T> _messageHandler;
 
-        public MessageProcessor(Func<Type, object> serviceCreator)
+        public MessageProcessor()
+        {
+            _thread = new Thread(ThreadProc) { Name = GetType().FullName };
+            Name = typeof(T).Name;
+        }
+
+        public MessageProcessor(ILog log, IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler ) :this()
+        {
+            _log = log;
+            _messageQueue = messageQueue;
+            _messageHandler = messageHandler;
+        }
+
+        public MessageProcessor(Func<Type, object> serviceCreator) : this()
         {
             _log = (ILog) serviceCreator(typeof (ILog));
             _messageHandler = (IMessageHandler<T>) serviceCreator(typeof (IMessageHandler<T>));
             _messageQueue = (IMessageQueueInbound<T>) serviceCreator(typeof (IMessageQueueInbound<T>));
-            _thread = new Thread(ThreadProc) {Name = GetType().FullName};
-            Name = typeof(T).Name;
         }
 
         public void Start()
