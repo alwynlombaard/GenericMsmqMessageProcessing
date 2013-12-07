@@ -39,9 +39,11 @@ class MyMessageHandler : IHandle<MyMessage>
 
 Start a message processor for it. Typically at app start. 
 ```C#
-var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
 var messageHandler = new MyMessageHandler<MyMessage>(eventstream, logger);
-var messageProcessor = new MessageProcessor<MyMessage>(logger, messageQueue, messageHandler);
+
+var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
+
+var messageProcessor = new MessageProcessor<MyMessage>(logger, inboundMessageQueue, messageHandler);
 
 messageProcessor.Start();
 ``` 
