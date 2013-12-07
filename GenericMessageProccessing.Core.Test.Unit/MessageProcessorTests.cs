@@ -3,24 +3,24 @@ using System.Collections;
 using System.Threading;
 using AutoMoq;
 using GenericMsmqProcessing.Core;
-using GenericMsmqProcessing.Core.Msmq;
 using log4net;
 using Moq;
 using Moq.Language.Flow;
 using NUnit.Framework;
 
-namespace GenericMessageProccessing.Core.Test.Unit.Msmq
+namespace GenericMessageProccessing.Core.Test.Unit
 {
 
-    public class FakeAnalyticsMessage : IMessage
-    {
-        
-    }
+   
 
     [TestFixture]
     [Category("Fast")]
-    public class MsmqMessageProcessorTests
+    public class MessageProcessorTests
     {
+        public class FakeAnalyticsMessage : IMessage
+        {
+
+        }
         private AutoMoqer _mocker;
         private Func<Type, object> _serviceLocator;
         private Mock<IMessageQueueInbound<FakeAnalyticsMessage>> _messageQueue;
@@ -63,7 +63,7 @@ namespace GenericMessageProccessing.Core.Test.Unit.Msmq
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(false, true, false);
 
-            var msmqProcessor = new MsmqMessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
+            var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
             Thread.Sleep(100);
             msmqProcessor.Stop();
@@ -80,7 +80,7 @@ namespace GenericMessageProccessing.Core.Test.Unit.Msmq
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(true, true, false, true, false);
 
-            var msmqProcessor = new MsmqMessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
+            var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
             Thread.Sleep(100);
             msmqProcessor.Stop();
@@ -95,7 +95,7 @@ namespace GenericMessageProccessing.Core.Test.Unit.Msmq
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                 .ReturnsInOrder(true, new Exception(), true);
             
-            var msmqProcessor = new MsmqMessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
+            var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
             Thread.Sleep(250);
             msmqProcessor.Stop();

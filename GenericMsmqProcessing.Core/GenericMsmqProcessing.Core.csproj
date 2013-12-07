@@ -54,7 +54,7 @@
     <Compile Include="IMessageQueueOutbound.cs" />
     <Compile Include="MessageHandler.cs" />
     <Compile Include="MessageProccessorCollection.cs" />
-    <Compile Include="Msmq\MsmqMessageProcessor.cs" />
+    <Compile Include="MessageProcessor.cs" />
     <Compile Include="Msmq\MsmqMessageQueueInbound.cs" />
     <Compile Include="Msmq\MsmqMessageQueueOutbound.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

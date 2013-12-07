@@ -2,9 +2,9 @@
 using System.Threading;
 using log4net;
 
-namespace GenericMsmqProcessing.Core.Msmq
+namespace GenericMsmqProcessing.Core
 {
-    public class MsmqMessageProcessor<T> : IMessageProcessor<T> where T : IMessage
+    public class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
     {
         private readonly ILog _log;
         private readonly IMessageQueueInbound<T> _messageQueue;
@@ -13,7 +13,7 @@ namespace GenericMsmqProcessing.Core.Msmq
         private readonly Thread _thread;
         private readonly IMessageHandler<T> _messageHandler;
 
-        public MsmqMessageProcessor(Func<Type, object> serviceCreator)
+        public MessageProcessor(Func<Type, object> serviceCreator)
         {
             _log = (ILog) serviceCreator(typeof (ILog));
             _messageHandler = (IMessageHandler<T>) serviceCreator(typeof (IMessageHandler<T>));

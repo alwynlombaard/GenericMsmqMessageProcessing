@@ -6,15 +6,18 @@ using ReallySimpleEventing;
 
 namespace GenericMessageProccessing.Core.Test.Unit
 {
-    public class FakeAnalyticsMessage : IMessage
-    {
-
-    }
+   
 
     [TestFixture]
     [Category("Fast")]
     public class MessageHandlerTests
     {
+
+        public class FakeAnalyticsMessage : IMessage
+        {
+
+        }
+
         private AutoMoqer _mocker;
         private Mock<IEventStream> _eventStream;
         private FakeAnalyticsMessage _fakeMessage;
