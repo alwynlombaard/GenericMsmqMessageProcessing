@@ -37,10 +37,12 @@ class MyMessageHandler : IHandle<MyMessage>
 
 ###Server###
 
-Start a message processor for it. Typically at app start. (Using Ninject for IOC in this example)
-
+Start a message processor for it. Typically at app start. 
 ```C#
-var messageProcessor = new MessageProcessor<MyMessage>(kernel.GetService);
+var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
+var messageHandler = new MyMessageHandler<MyMessage>(eventstream, logger);
+var messageProcessor = new MessageProcessor<MyMessage>(logger, messageQueue, messageHandler);
+
 messageProcessor.Start();
 ``` 
 
