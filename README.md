@@ -54,7 +54,7 @@ Add a message to the queue.
 try
 {
 	var queue = new MsmqMessageQueueOutbound<MyMessage>();
-	var message = new Message();
+	var message = new MyMessage();
 	queue.Send(message);
 }
 catch (Exception ex)...
