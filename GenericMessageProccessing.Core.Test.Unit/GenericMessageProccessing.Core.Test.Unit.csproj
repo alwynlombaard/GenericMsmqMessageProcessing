@@ -78,9 +78,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GenericMsmqProcessing.Core\GenericMsmqProcessing.Core.csproj">
       <Project>{8524431a-42f0-4803-90b9-bbf5c71959b5}</Project>
       <Name>GenericMsmqProcessing.Core</Name>
