@@ -52,6 +52,12 @@ var messageProcessor = new MessageProcessor<MyMessage>(	logger,
 messageProcessor.Start();
 ``` 
 
+To stop the processor:
+
+```C#
+messageProcessor.Stop();
+```
+
 
 ###Client###
 

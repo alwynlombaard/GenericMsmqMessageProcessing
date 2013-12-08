@@ -68,7 +68,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
             var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
-            Thread.Sleep(100);
+            Thread.Sleep(500);
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
@@ -101,7 +101,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
             var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
-            Thread.Sleep(100);
+            Thread.Sleep(500);
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
@@ -116,7 +116,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
             
             var msmqProcessor = new MessageProcessor<FakeAnalyticsMessage>(_serviceLocator);
             msmqProcessor.Start();
-            Thread.Sleep(250);
+            Thread.Sleep(500);
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(2));

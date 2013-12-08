@@ -18,27 +18,44 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     {
     }
 
-
+    public interface IDoSomeWorkWithMyMessage
+    {
+        void DoWork(MyMessage message);
+    }
 
     [TestFixture]
     public class MsmqMessageQueueTests
     {
+        internal class MyHandler : IHandle<MyMessage>
+        {
+            public void Handle(MyMessage message)
+            {
+                _iDoSomeWorkWithMyMessage.Object.DoWork(message);
+            }
+
+            public void OnError(MyMessage message, Exception ex)
+            {
+
+            }
+        }
 
         private AutoMoqer _mocker;
         private MessageHandler<MyMessage> _messageHandler;
         private Mock<ILog> _logger;
-        private Mock<IEventStream> _eventStream;
+        private IEventStream _eventStream;
         private MsmqMessageQueueInbound<MyMessage> _inboundMessageQueue;
         private MessageProcessor<MyMessage> _messageProcessor;
-
+        private static Mock<IDoSomeWorkWithMyMessage> _iDoSomeWorkWithMyMessage;
+            
         [SetUp]
         public void SetUp()
         {
             _mocker = new AutoMoqer();
             _logger = _mocker.GetMock<ILog>();
-            _eventStream = _mocker.GetMock<IEventStream>();
+            _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithMyMessage>();
 
-            _messageHandler = new MessageHandler<MyMessage>(_eventStream.Object);
+            _eventStream = ReallySimpleEventing.ReallySimpleEventing.CreateEventStream();
+            _messageHandler = new MessageHandler<MyMessage>(_eventStream);
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
             _messageProcessor = new MessageProcessor<MyMessage>(_logger.Object,
                 _inboundMessageQueue,
@@ -62,7 +79,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
             Thread.Sleep(1000);
 
-            _eventStream.Verify(x=> x.Raise(It.IsAny<MyMessage>()), Times.Once());
+            _iDoSomeWorkWithMyMessage.Verify(x=> x.DoWork(It.IsAny<MyMessage>()), Times.Once());
 
         }
     }
