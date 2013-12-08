@@ -41,6 +41,9 @@ class MyHandler : IHandle<MyMessage>
 Start a message processor for MyMessage. Typically at app start. 
 
 ```C#
+var eventStream = ReallySimpleEventing.CreateEventStream();
+//see ReallySimpleEventing README for how to use with a container
+ 
 var messageHandler = new MessageHandler<MyMessage>(eventstream);
 
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
