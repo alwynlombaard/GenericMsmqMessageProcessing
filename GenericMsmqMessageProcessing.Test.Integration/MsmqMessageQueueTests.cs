@@ -16,6 +16,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
     public class MyMessage : IMessage
     {
+        public string Message { get; set; }
     }
 
     public interface IDoSomeWorkWithMyMessage
@@ -53,7 +54,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _mocker = new AutoMoqer();
             _logger = _mocker.GetMock<ILog>();
             _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithMyMessage>();
-
+          
             _eventStream = ReallySimpleEventing.ReallySimpleEventing.CreateEventStream();
             _messageHandler = new MessageHandler<MyMessage>(_eventStream);
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
@@ -71,15 +72,20 @@ namespace GenericMsmqMessageProcessing.Test.Integration
         }
 
         [Test]
-        public void CanHandleMessage()
+        public void CanHandleMessages()
         {
             var queue = new MsmqMessageQueueOutbound<MyMessage>();
-            var message = new MyMessage();
+            
+            var message = new MyMessage{Message = "Hello"};
             queue.Send(message);
 
-            Thread.Sleep(1000);
+            var message2 = new MyMessage {Message = "Hello 2"};
+            queue.Send(message2);
 
-            _iDoSomeWorkWithMyMessage.Verify(x=> x.DoWork(It.IsAny<MyMessage>()), Times.Once());
+            Thread.Sleep(1000);
+            
+            _iDoSomeWorkWithMyMessage.Verify(x=> x.DoWork(It.Is<MyMessage>(m => m.Message == "Hello")), Times.Once());
+            _iDoSomeWorkWithMyMessage.Verify(x=> x.DoWork(It.Is<MyMessage>(m => m.Message == "Hello 2")), Times.Once());
 
         }
     }
