@@ -38,7 +38,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _logger = _mocker.GetMock<ILog>();
             _eventStream = _mocker.GetMock<IEventStream>();
 
-            _messageHandler = new MessageHandler<MyMessage>(_eventStream.Object, _logger.Object);
+            _messageHandler = new MessageHandler<MyMessage>(_eventStream.Object);
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
             _messageProcessor = new MessageProcessor<MyMessage>(_logger.Object,
                 _inboundMessageQueue,
