@@ -16,10 +16,12 @@ class MyMessage : IMessage
 }
 ``` 
 
-Declare a Handler for it (see https://github.com/davidwhitney/ReallySimpleEventing)
+###Server###
+
+Declare a Handler for MyMessage (see https://github.com/davidwhitney/ReallySimpleEventing)
 
 ```C#
-class MyMessageHandler : IHandle<MyMessage>
+class MyHandler : IHandle<MyMessage>
 {
 	public void Handle(MyMessage message)
 	{
@@ -35,11 +37,11 @@ class MyMessageHandler : IHandle<MyMessage>
 }
 ``` 
 
-###Server###
 
-Start a message processor for it. Typically at app start. 
+Start a message processor for MyMessage. Typically at app start. 
+
 ```C#
-var messageHandler = new MyMessageHandler<MyMessage>(eventstream, logger);
+var messageHandler = new MessageHandler<MyMessage>(eventstream, logger);
 
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
 

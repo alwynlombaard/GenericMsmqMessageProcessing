@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A2AEB570-0DD0-49F0-84F5-32FDCEFA46DA}</ProjectGuid>
+    <ProjectGuid>{7A1F4722-EA1B-44C7-A295-6F4F6A4A20B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GenericMessageProccessing.Core.Test.Unit</RootNamespace>
-    <AssemblyName>GenericMessageProccessing.Core.Test.Unit</AssemblyName>
+    <RootNamespace>GenericMsmqMessageProcessing.Test.Integration</RootNamespace>
+    <AssemblyName>GenericMsmqMessageProcessing.Test.Integration</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -63,7 +63,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,8 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageHandlerTests.cs" />
-    <Compile Include="MessageProcessorTests.cs" />
+    <Compile Include="MsmqMessageQueueTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

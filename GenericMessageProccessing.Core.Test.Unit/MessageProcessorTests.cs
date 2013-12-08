@@ -93,7 +93,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
 
         [Test]
-        public void MsmqMessageProcessorHandlesMultipleInboundMessages()
+        public void MessageProcessorHandlesMultipleInboundMessages()
         {
 
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
@@ -109,7 +109,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
         }
 
         [Test]
-        public void MsmqMessageProcessorLogsErrors()
+        public void MessageProcessorLogsErrors()
         {
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                 .ReturnsInOrder(true, new Exception(), true);
