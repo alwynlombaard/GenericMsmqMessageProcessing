@@ -16,7 +16,7 @@ class MyMessage : IMessage
 
 ###Server###
 
-Declare a Handler for it.
+Declare a handler for it.
 
 ```C#
 class MyMessageHandler : IMessageHandler <MyMessage>
@@ -35,7 +35,7 @@ class MyMessageHandler : IMessageHandler <MyMessage>
 ``` 
 
 
-Start a message processor for MyMessage. Typically at app start. 
+Start a message processor. Typically at app start. 
 
 ```C#
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
