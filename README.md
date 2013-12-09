@@ -16,7 +16,7 @@ class MyMessage : IMessage
 
 ###Server###
 
-Declare a Handler for MyMessage
+Declare a Handler for it.
 
 ```C#
 class MyMessageHandler : IMessageHandler <MyMessage>
@@ -73,9 +73,8 @@ catch (Exception ex)...
 
 ###Container setup###
 
-Ninject example bindings:
+Ninject example bindings MessageProcessor
 
-####MessageProcessor####
 ```C#
 Bind(typeof (IMessageQueueInbound<>))
 .To(typeof (MsmqMessageQueueInbound<>));
