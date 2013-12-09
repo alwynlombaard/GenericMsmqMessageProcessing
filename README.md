@@ -23,7 +23,8 @@ class MyMessageHandler : IMessageHandler <MyMessage>
 {
 	public void HandleMessage(MyMessage message)
 	{
-		_iDoSomeWorkWithMyMessage.Object.DoWork(message);
+		//handle your message here
+		...
 	}
 
 	public void Dispose()
