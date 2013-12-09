@@ -18,21 +18,19 @@ class MyMessage : IMessage
 
 ###Server###
 
-Declare a Handler for MyMessage (see https://github.com/davidwhitney/ReallySimpleEventing)
+Declare a Handler for MyMessage
 
 ```C#
-class MyHandler : IHandle<MyMessage>
+ class MyMessageHandler : IMessageHandler <MyMessage>
 {
-	public void Handle(MyMessage message)
+	public void HandleMessage(MyMessage message)
 	{
-		//handle your message here
-		...
+		_iDoSomeWorkWithMyMessage.Object.DoWork(message);
 	}
-	
-	public void OnError(MyMessage message, Exception ex)
+
+	public void Dispose()
 	{
-		//handle your errors here
-		...
+		
 	}
 }
 ``` 
@@ -41,12 +39,9 @@ class MyHandler : IHandle<MyMessage>
 Start a message processor for MyMessage. Typically at app start. 
 
 ```C#
-var eventStream = ReallySimpleEventing.CreateEventStream();
-//see ReallySimpleEventing README for how to use with a container
- 
-var messageHandler = new MessageHandler<MyMessage>(eventstream);
-
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
+
+var messageHandler = new MyMessageHandler()
 
 var messageProcessor = new MessageProcessor<MyMessage>(	logger, 
 														inboundMessageQueue, 
@@ -78,7 +73,6 @@ catch (Exception ex)...
 ``` 
 
 ###Container setup###
-see https://github.com/davidwhitney/ReallySimpleEventing for setting up ReallySimpleEventing
 
 Ninject example bindings:
 

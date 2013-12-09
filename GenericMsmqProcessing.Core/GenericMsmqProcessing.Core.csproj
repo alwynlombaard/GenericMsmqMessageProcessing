@@ -52,7 +52,7 @@
     <Compile Include="MessageProccessor\IMessageProcessor.cs" />
     <Compile Include="Queue\IMessageQueueInbound.cs" />
     <Compile Include="Queue\IMessageQueueOutbound.cs" />
-    <Compile Include="MessageHandler\MessageHandler.cs" />
+    <Compile Include="MessageHandler\ReallySimpleEventingMessageHandler.cs" />
     <Compile Include="MessageProccessor\MessageProccessorCollection.cs" />
     <Compile Include="MessageProccessor\MessageProcessor.cs" />
     <Compile Include="Queue\Msmq\MsmqMessageQueueInbound.cs" />

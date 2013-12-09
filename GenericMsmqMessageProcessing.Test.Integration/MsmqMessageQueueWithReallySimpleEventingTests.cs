@@ -6,29 +6,33 @@ using GenericMsmqProcessing.Core.Queue.Msmq;
 using log4net;
 using Moq;
 using NUnit.Framework;
+using ReallySimpleEventing;
+using ReallySimpleEventing.EventHandling;
 using AutoMoq;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
+
     [TestFixture]
-    public class MsmqMessageQueueTests
+    public class MsmqMessageQueueWithReallySimpleEventingTests
     {
-        class MyMessageHandler : IMessageHandler <MyMessage>
+        class MyHandler : IHandle<MyMessage>
         {
-            public void HandleMessage(MyMessage message)
+            public void Handle(MyMessage message)
             {
                 _iDoSomeWorkWithMyMessage.Object.DoWork(message);
             }
 
-            public void Dispose()
+            public void OnError(MyMessage message, Exception ex)
             {
-                throw new NotImplementedException();
+
             }
         }
 
         private AutoMoqer _mocker;
-        private MyMessageHandler _messageHandler;
+        private ReallySimpleEventingMessageHandler<MyMessage> _reallySimpleEventingMessageHandler;
         private Mock<ILog> _logger;
+        private IEventStream _eventStream;
         private MsmqMessageQueueInbound<MyMessage> _inboundMessageQueue;
         private MessageProcessor<MyMessage> _messageProcessor;
         private static Mock<IDoSomeWorkWithMyMessage> _iDoSomeWorkWithMyMessage;
@@ -40,11 +44,12 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _logger = _mocker.GetMock<ILog>();
             _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithMyMessage>();
           
-            _messageHandler = new MyMessageHandler();
+            _eventStream = ReallySimpleEventing.ReallySimpleEventing.CreateEventStream();
+            _reallySimpleEventingMessageHandler = new ReallySimpleEventingMessageHandler<MyMessage>(_eventStream);
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
             _messageProcessor = new MessageProcessor<MyMessage>(_logger.Object,
                 _inboundMessageQueue,
-                _messageHandler);
+                _reallySimpleEventingMessageHandler);
 
             _messageProcessor.Start();
         }

@@ -70,7 +70,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDoSomeWorkWithMyMessage.cs" />
     <Compile Include="MsmqMessageQueueTests.cs" />
+    <Compile Include="MsmqMessageQueueWithReallySimpleEventingTests.cs" />
+    <Compile Include="MyMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

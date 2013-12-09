@@ -34,7 +34,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
         [Test]
         public void HandleMessageRaisesEventForMessage()
         {
-            var handler = _mocker.Resolve<MessageHandler<FakeAnalyticsMessage>>();
+            var handler = _mocker.Resolve<ReallySimpleEventingMessageHandler<FakeAnalyticsMessage>>();
 
             handler.HandleMessage(_fakeMessage);
 

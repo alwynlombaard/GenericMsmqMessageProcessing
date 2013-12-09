@@ -2,11 +2,11 @@
 
 namespace GenericMsmqProcessing.Core.MessageHandler
 {
-    public class MessageHandler<T> : IMessageHandler<T>
+    public class ReallySimpleEventingMessageHandler<T> : IMessageHandler<T>
     {
         private readonly IEventStream _eventStream;
 
-        public MessageHandler(IEventStream eventStream)
+        public ReallySimpleEventingMessageHandler(IEventStream eventStream)
         {
             _eventStream = eventStream;
         }
