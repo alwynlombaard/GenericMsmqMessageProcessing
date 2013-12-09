@@ -73,7 +73,7 @@ catch (Exception ex)...
 
 ###Container setup###
 
-Ninject example bindings MessageProcessor
+Ninject example bindings for MessageProcessor dependencies.
 
 ```C#
 Bind(typeof (IMessageQueueInbound<>))
