@@ -16,9 +16,9 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
         {
             _log = log;
             _path = @".\private$\" + typeof(T).FullName;
-            if (!System.Messaging.MessageQueue.Exists(_path))
+            if (!MessageQueue.Exists(_path))
             {
-                System.Messaging.MessageQueue.Create(_path, transactional: false);
+                MessageQueue.Create(_path, transactional: false);
             }
         }
 
@@ -26,7 +26,7 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
         {
             try
             {
-                using (var queue = new System.Messaging.MessageQueue(_path))
+                using (var queue = new MessageQueue(_path))
                 {
                     var msmqMessage = queue.Receive(_timeout, MessageQueueTransactionType.Automatic);
                     if (msmqMessage == null)

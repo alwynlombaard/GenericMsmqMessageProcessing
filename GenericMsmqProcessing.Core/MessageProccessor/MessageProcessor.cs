@@ -2,7 +2,6 @@
 using System.Threading;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.Queue;
-using log4net;
 
 namespace GenericMsmqProcessing.Core.MessageProccessor
 {
@@ -10,8 +9,8 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
     {
         private readonly IMessageQueueInbound<T> _messageQueue;
 
-        private readonly ManualResetEvent _stop = new ManualResetEvent(false);
-        private readonly Thread _thread;
+        private ManualResetEvent _stop = new ManualResetEvent(false);
+        private Thread _thread;
         private readonly IMessageHandler<T> _messageHandler;
 
 
@@ -25,16 +24,32 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
 
         public void Start()
         {
+            if (_thread.ThreadState == ThreadState.Stopped)
+            {
+                _thread = null;
+                _stop = null;
+                _thread = new Thread(ThreadProc) { Name = GetType().FullName };
+            }
             if (_thread.ThreadState == ThreadState.Unstarted)
             {
+                _stop = new ManualResetEvent(false);
                 _thread.Start();
             }
         }
 
         public void Stop()
         {
-            _stop.Set();
-            _thread.Join();
+            if (IsRunning())
+            {
+                _stop.Set();
+                _thread.Join();
+            }
+        }
+
+        public bool IsRunning()
+        {
+            return _thread.ThreadState != ThreadState.Unstarted
+                && _thread.ThreadState != ThreadState.Stopped;
         }
 
         private void ThreadProc(object o)
