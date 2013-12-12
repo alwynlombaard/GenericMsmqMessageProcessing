@@ -47,9 +47,10 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _eventStream = ReallySimpleEventing.ReallySimpleEventing.CreateEventStream();
             _reallySimpleEventingMessageHandler = new ReallySimpleEventingMessageHandler<MyMessage>(_eventStream);
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
-            _messageProcessor = new MessageProcessor<MyMessage>(_logger.Object,
-                _inboundMessageQueue,
+            _messageProcessor = new MessageProcessor<MyMessage>(_inboundMessageQueue,
                 _reallySimpleEventingMessageHandler);
+
+            TestQueues.PurgeQueues();
 
             _messageProcessor.Start();
         }

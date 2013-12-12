@@ -20,9 +20,14 @@ namespace GenericMsmqMessageProcessing.Test.Integration
                 _iDoSomeWorkWithMyMessage.Object.DoWork(message);
             }
 
+            public void OnError(MyMessage message, Exception ex)
+            {
+                
+            }
+
             public void Dispose()
             {
-                throw new NotImplementedException();
+               
             }
         }
 
@@ -42,12 +47,15 @@ namespace GenericMsmqMessageProcessing.Test.Integration
           
             _messageHandler = new MyMessageHandler();
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(_logger.Object);
-            _messageProcessor = new MessageProcessor<MyMessage>(_logger.Object,
-                _inboundMessageQueue,
+            _messageProcessor = new MessageProcessor<MyMessage>(_inboundMessageQueue,
                 _messageHandler);
+
+            TestQueues.PurgeQueues();
 
             _messageProcessor.Start();
         }
+
+       
 
         [TearDown]
         public void TearDown()

@@ -7,11 +7,9 @@ using ReallySimpleEventing;
 
 namespace GenericMessageProccessing.Core.Test.Unit
 {
-   
-
     [TestFixture]
     [Category("Fast")]
-    public class MessageHandlerTests
+    public class ReallySimpleEventingMessageHandlerTests
     {
 
         public class FakeAnalyticsMessage : IMessage

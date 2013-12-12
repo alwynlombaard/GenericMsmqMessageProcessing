@@ -1,4 +1,5 @@
-﻿using ReallySimpleEventing;
+﻿using System;
+using ReallySimpleEventing;
 
 namespace GenericMsmqProcessing.Core.MessageHandler
 {
@@ -15,7 +16,12 @@ namespace GenericMsmqProcessing.Core.MessageHandler
         {
            _eventStream.Raise(message);
         }
-        
+
+        public void OnError(T message, Exception ex)
+        {
+           throw ex;
+        }
+
         public void Dispose()
         {
            

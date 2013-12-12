@@ -26,6 +26,12 @@ class MyMessageHandler : IMessageHandler <MyMessage>
 		//handle your message here
 		...
 	}
+	
+	public void OnError(MyMessage message, Exception ex)
+	{
+		//handle your errors here
+		...
+	}
 
 	public void Dispose()
 	{
@@ -93,4 +99,4 @@ Bind<ILog>()
 ```
 
 
-Based on Msmq code by https://github.com/michaellperry
+Msmq implementation based on code by https://github.com/michaellperry
