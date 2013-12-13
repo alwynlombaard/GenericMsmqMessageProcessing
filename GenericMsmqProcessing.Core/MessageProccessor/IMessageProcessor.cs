@@ -4,7 +4,7 @@
     {
         
     }
-    
+
     public interface IMessageProcessor 
     {
         void Start();

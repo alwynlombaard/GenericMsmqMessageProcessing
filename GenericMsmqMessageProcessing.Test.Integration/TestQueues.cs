@@ -8,10 +8,11 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     {
         public static void PurgeQueues()
         {
-
             var queues = MessageQueue.GetPrivateQueuesByMachine(".")
                 .Where(
-                    q => q.QueueName.ToLowerInvariant().Contains(typeof (MyMessage).Name.ToLowerInvariant())
+                    q => 
+                        q.QueueName.ToLowerInvariant().Contains(typeof (MyMessageForMsmqMessageQueueTests).Name.ToLowerInvariant())
+                        || q.QueueName.ToLowerInvariant().Contains(typeof (MyMessageForFactoryTesting).Name.ToLowerInvariant())
                          || q.QueueName.ToLowerInvariant().Contains(typeof (MyFakeMessage).Name.ToLowerInvariant()));
 
             foreach (var queue in queues)

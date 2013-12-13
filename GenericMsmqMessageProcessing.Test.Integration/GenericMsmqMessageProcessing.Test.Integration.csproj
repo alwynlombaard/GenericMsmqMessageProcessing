@@ -58,9 +58,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="ReallySimpleEventing">
-      <HintPath>..\packages\ReallySimpleEventing.1.2.0\lib\net45\ReallySimpleEventing.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Messaging" />
@@ -71,12 +68,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDoSomeWorkWithMyMessage.cs" />
+    <Compile Include="IDoSomeWorkWithIMessage.cs" />
     <Compile Include="MessageProcessorCollectionFactoryTests.cs" />
     <Compile Include="MsmqWithMessageProcessorCollectionFactoryTests.cs" />
     <Compile Include="MsmqMessageQueueTests.cs" />
-    <Compile Include="MsmqMessageQueueWithReallySimpleEventingTests.cs" />
-    <Compile Include="MyMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestQueues.cs" />
   </ItemGroup>

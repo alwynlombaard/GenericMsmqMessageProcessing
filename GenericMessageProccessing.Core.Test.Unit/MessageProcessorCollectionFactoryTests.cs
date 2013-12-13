@@ -49,8 +49,8 @@ namespace GenericMessageProccessing.Core.Test.Unit
         }
 
 
-        public class FakeAnalyticsMessage : IMessage{}
-        public class FakeAnalyticsMessage2 : IMessage{}
+        public struct FakeAnalyticsMessage : IMessage { }
+        public struct FakeAnalyticsMessage2 : IMessage { }
 
         [Test]
         public void Manafacture_CanManufactureCollection()
