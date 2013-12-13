@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GenericMsmqProcessing.Core.MessageHandler;
+using GenericMsmqProcessing.Core.Queue;
 using GenericMsmqProcessing.Core.Queue.Msmq;
 using log4net;
 
@@ -14,6 +15,28 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         public MessageProcessorCollectionFactory(ILog log)
         {
             _log = log;
+        }
+
+        public IMessageProccessorCollection Manafacture(Func<Type, object> serviceLocator)
+        {
+            var messageTypes = GetMessageTypes();
+
+            var processors = new MessageProccessorCollection();
+            foreach (var messageType in messageTypes)
+            {
+                var queueType = GetGenericType(typeof(IMessageQueueInbound<>), messageType);
+                var handlerType = GetGenericType(typeof(IMessageHandler<>), messageType);
+                var processorType = GetGenericType(typeof(MessageProcessor<>), messageType);
+
+                var queue = serviceLocator(queueType);
+                var handler = serviceLocator(handlerType);
+                var processor = (IMessageProcessor)Activator.CreateInstance(processorType, queue, handler);
+
+                processors.Add(processor);
+                _log.InfoFormat("Added {0} Processor", processor.Name);
+            }
+
+            return processors;
         }
 
         public IMessageProccessorCollection Manufacture()
