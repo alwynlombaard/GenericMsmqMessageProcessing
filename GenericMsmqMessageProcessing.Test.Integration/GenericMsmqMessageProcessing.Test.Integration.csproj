@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDoSomeWorkWithMyMessage.cs" />
+    <Compile Include="MessageProcessorCollectionFactoryTests.cs" />
+    <Compile Include="MsmqWithMessageProcessorCollectionFactoryTests.cs" />
     <Compile Include="MsmqMessageQueueTests.cs" />
     <Compile Include="MsmqMessageQueueWithReallySimpleEventingTests.cs" />
     <Compile Include="MyMessage.cs" />

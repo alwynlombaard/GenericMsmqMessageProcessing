@@ -11,6 +11,7 @@ using AutoMoq;
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
     [TestFixture]
+    [Category("Slow")]
     public class MsmqMessageQueueTests
     {
         class MyMessageHandler : IMessageHandler <MyMessage>

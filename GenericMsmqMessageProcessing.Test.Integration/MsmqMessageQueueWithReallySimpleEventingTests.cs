@@ -14,6 +14,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 {
 
     [TestFixture]
+    [Category("Slow")]
     public class MsmqMessageQueueWithReallySimpleEventingTests
     {
         class MyHandler : IHandle<MyMessage>

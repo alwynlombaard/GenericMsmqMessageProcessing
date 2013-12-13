@@ -41,7 +41,22 @@ class MyMessageHandler : IMessageHandler <MyMessage>
 ``` 
 
 
-Start a message processor. Typically at app start. 
+Start message processor(s). Typically at app start. 
+
+```C#
+var messageProcessorCollection = new MessageProcessorCollectionFactory(logger)
+								.Manufacture();
+
+messageProcessorCollection.StartAll();							
+
+```
+
+To stop processors:
+```C#
+messageProcessorCollection.StopAll();
+```
+
+Or do it explicitly:
 
 ```C#
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
@@ -78,15 +93,9 @@ catch (Exception ex)...
 
 ###Container setup###
 
-Ninject example bindings for MessageProcessor dependencies.
+Ninject example bindings for MsmqMessageQueueInbound dependency.
 
 ```C#
-Bind(typeof (IMessageQueueInbound<>))
-.To(typeof (MsmqMessageQueueInbound<>));
-
-Bind(typeof(IMessageHandler<>))
-.To(typeof(MessageHandler<>));
-
 Bind<ILog>()
 .ToMethod(x =>
 {

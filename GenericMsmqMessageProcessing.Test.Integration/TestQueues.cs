@@ -8,22 +8,25 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     {
         public static void PurgeQueues()
         {
-            try
-            {
-                var queue = MessageQueue.GetPrivateQueuesByMachine(".")
-                    .FirstOrDefault(
-                        q => q.QueueName.ToLowerInvariant().Contains(typeof(MyMessage).Name.ToLowerInvariant()));
 
-                if (queue != null)
+            var queues = MessageQueue.GetPrivateQueuesByMachine(".")
+                .Where(
+                    q => q.QueueName.ToLowerInvariant().Contains(typeof (MyMessage).Name.ToLowerInvariant())
+                         || q.QueueName.ToLowerInvariant().Contains(typeof (MyFakeMessage).Name.ToLowerInvariant()));
+
+            foreach (var queue in queues)
+            {
+                try
                 {
                     queue.Purge();
                 }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Could not purge test queue", ex);
+                }
+            }
 
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Could not purge test queue", ex);
-            }
-        } 
+        }
+
     }
 }

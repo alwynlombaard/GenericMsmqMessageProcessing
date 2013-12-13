@@ -50,6 +50,8 @@
     <Compile Include="MessageHandler\IMessageHandler.cs" />
     <Compile Include="MessageProccessor\IMessageProccessorCollection.cs" />
     <Compile Include="MessageProccessor\IMessageProcessor.cs" />
+    <Compile Include="MessageProccessor\IMessageProcessorCollectionFactory.cs" />
+    <Compile Include="MessageProccessor\MessageProcessorCollectionFactory.cs" />
     <Compile Include="Queue\IMessageQueueInbound.cs" />
     <Compile Include="Queue\IMessageQueueOutbound.cs" />
     <Compile Include="MessageHandler\ReallySimpleEventingMessageHandler.cs" />
