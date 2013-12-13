@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GenericMsmqProcessing.Core.MessageHandler;
@@ -13,12 +15,23 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         private Task _task;
         private CancellationTokenSource _cancellationTokenSource;
         private readonly IMessageQueueInbound<T> _messageQueue;
-        private readonly IMessageHandler<T> _messageHandler;
+        private readonly List<IMessageHandler<T>> _messageHandlers;
 
-       public MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
+
+        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IEnumerable<IMessageHandler<T>> messageHandlers)
         {
             _messageQueue = messageQueue;
-            _messageHandler = messageHandler;
+            _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();
+            _messageHandlers.AddRange(messageHandlers);
+            Name = typeof(T).Name;
+        }
+        
+        
+        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
+        {
+            _messageQueue = messageQueue;
+            _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();
+            _messageHandlers.Add(messageHandler);
             Name = typeof(T).Name;
         }
 
@@ -31,15 +44,18 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
                 {
                     continue;
                 }
-                using (_messageHandler)
+                foreach (var messageHandler in _messageHandlers)
                 {
-                    try
+                    using (messageHandler)
                     {
-                        _messageHandler.HandleMessage(message);
-                    }
-                    catch (Exception handlerException)
-                    {
-                        _messageHandler.OnError(message, handlerException);
+                        try
+                        {
+                            messageHandler.HandleMessage(message);
+                        }
+                        catch (Exception handlerException)
+                        {
+                            messageHandler.OnError(message, handlerException);
+                        }
                     }
                 }
             }

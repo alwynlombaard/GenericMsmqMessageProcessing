@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
-using AutoMoq;
 using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
@@ -21,17 +21,18 @@ namespace GenericMessageProccessing.Core.Test.Unit
         {
 
         }
-        private AutoMoqer _mocker;
+
         private Mock<IMessageQueueInbound<FakeMessage>> _messageQueue;
         private Mock<IMessageHandler<FakeMessage>> _messageHandler;
+        private Mock<IMessageHandler<FakeMessage>> _messageHandler2;
         private FakeMessage _fakeMessage;
 
         [SetUp]
         public void SetUp()
         {
-            _mocker = new AutoMoqer();
             _messageQueue = new Mock<IMessageQueueInbound<FakeMessage>>();
-            _messageHandler = _mocker.GetMock<IMessageHandler<FakeMessage>>();
+            _messageHandler = new Mock<IMessageHandler<FakeMessage>>();
+            _messageHandler2 = new Mock<IMessageHandler<FakeMessage>>();
             _fakeMessage = new FakeMessage();
         }
 
@@ -48,7 +49,29 @@ namespace GenericMessageProccessing.Core.Test.Unit
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
+        }
 
+        [Test]
+        public void MessageProcessorWithMultipleHandlersHandlesInboundMessage()
+        {
+
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+               .ReturnsInOrder(false, true, false);
+
+            var handlers = new List<IMessageHandler<FakeMessage>>
+            {
+                _messageHandler.Object, 
+                _messageHandler2.Object
+            };
+            
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
+            
+            msmqProcessor.Start();
+            Thread.Sleep(100);
+            msmqProcessor.Stop();
+
+            _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
+            _messageHandler2.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
         }
 
         [Test]
@@ -64,7 +87,29 @@ namespace GenericMessageProccessing.Core.Test.Unit
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
+        }
 
+        [Test]
+        public void MessageProcessorWithMultipleHandlersHandlesInboundMessages()
+        {
+
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+              .ReturnsInOrder(true, true, false, true, false);
+
+            var handlers = new List<IMessageHandler<FakeMessage>>
+            {
+                _messageHandler.Object, 
+                _messageHandler2.Object
+            };
+
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
+
+            msmqProcessor.Start();
+            Thread.Sleep(100);
+            msmqProcessor.Stop();
+
+            _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
+            _messageHandler2.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
         }
 
         [Test]
