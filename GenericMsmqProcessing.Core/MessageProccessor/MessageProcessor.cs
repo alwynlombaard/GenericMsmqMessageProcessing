@@ -8,6 +8,8 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
     {
+        private readonly object _lock = new object();
+        private bool _running;
         private Task _task;
         private CancellationTokenSource _cancellationTokenSource;
         private readonly IMessageQueueInbound<T> _messageQueue;
@@ -45,14 +47,24 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
 
         public void Start()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            _task = new Task(ListenForMessages, _cancellationTokenSource.Token);
-            _task.Start();
+            lock (_lock)
+            {
+                if (_running) return;
+                _cancellationTokenSource = new CancellationTokenSource();
+                _task = new Task(ListenForMessages, _cancellationTokenSource.Token);
+                _task.Start();
+                _running = true;
+            }
         }
 
         public void Stop()
         {
-            _cancellationTokenSource.Cancel();
+            lock (_lock)
+            {
+                if (!_running) return;
+                _cancellationTokenSource.Cancel();
+                _running = false;
+            }
         }
 
         public string Name { get; set; }

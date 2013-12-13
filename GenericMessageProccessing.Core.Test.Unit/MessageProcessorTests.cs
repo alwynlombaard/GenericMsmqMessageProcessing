@@ -89,9 +89,6 @@ namespace GenericMessageProccessing.Core.Test.Unit
             msmqProcessor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(2));
-
-
-
         }
     }
 

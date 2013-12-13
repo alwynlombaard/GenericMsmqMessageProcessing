@@ -116,5 +116,3 @@ Bind<ILog>()
 });
 ```
 
-
-Msmq implementation based on code by https://github.com/michaellperry
