@@ -73,7 +73,7 @@ var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
 
 var messageHandler = new MyMessageHandler()
 
-var messageProcessor = new MessageProcessor<MyMessage>( inboundMessageQueue, 
+var messageProcessor = MessageProcessor<MyMessage>.Manufacture( inboundMessageQueue, 
 														messageHandler);
 
 messageProcessor.Start();
