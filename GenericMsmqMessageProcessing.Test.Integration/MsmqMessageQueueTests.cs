@@ -44,7 +44,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
         private MyMessageHandler _messageHandler;
         private Mock<ILog> _logger;
         private MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests> _inboundMessageQueue;
-        private MessageProcessor<MyMessageForMsmqMessageQueueTests> _messageProcessor;
+        private IMessageProcessor _messageProcessor;
         private static Mock<IDoSomeWorkWithIMessage> _iDoSomeWorkWithMyMessage;
             
         [SetUp]
@@ -56,7 +56,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
           
             _messageHandler = new MyMessageHandler();
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests>(_logger.Object);
-            _messageProcessor = new MessageProcessor<MyMessageForMsmqMessageQueueTests>(_inboundMessageQueue,
+            _messageProcessor = MessageProcessor<MyMessageForMsmqMessageQueueTests>.Manufacture(_inboundMessageQueue,
                 _messageHandler);
 
             TestQueues.PurgeQueues();

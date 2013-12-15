@@ -22,6 +22,34 @@ namespace GenericMessageProccessing.Core.Test.Unit
             public void Dispose(){}
         }
 
+        public class FakeMessageHandler : IMessageHandler<FakeMessage>
+        {
+            public void HandleMessage(FakeMessage message) { }
+            public void OnError(FakeMessage message, Exception ex) { }
+            public void Dispose() { }
+        }
+        
+        public class FakeMessageHandler2 : IMessageHandler<FakeMessage>
+        {
+            public void HandleMessage(FakeMessage message) { }
+            public void OnError(FakeMessage message, Exception ex) { }
+            public void Dispose() { }
+        }
+
+        public class FakeMessage2Handler : IMessageHandler<FakeMessage2>
+        {
+            public void HandleMessage(FakeMessage2 message) { }
+            public void OnError(FakeMessage2 message, Exception ex) { }
+            public void Dispose() { }
+        }
+
+        public class FakeMessage2Handler2 : IMessageHandler<FakeMessage2>
+        {
+            public void HandleMessage(FakeMessage2 message) { }
+            public void OnError(FakeMessage2 message, Exception ex) { }
+            public void Dispose() { }
+        }
+        
         public class FakeQueue<T> : IMessageQueueInbound<T>
         {
             public bool TryReceive(out T message)
@@ -40,6 +68,8 @@ namespace GenericMessageProccessing.Core.Test.Unit
         {
             var testContainer = new UnityContainer()
                 .RegisterType(typeof (IMessageHandler<>), typeof (FakeHandler<>))
+                .RegisterInstance(typeof (IMessageHandler<FakeMessage>), new FakeMessageHandler())
+                .RegisterInstance(typeof (IMessageHandler<FakeMessage2>), new FakeMessage2Handler())
                 .RegisterType(typeof (IMessageQueueInbound<>), typeof (FakeQueue<>));
 
             _mocker = new AutoMoqer(testContainer);
@@ -49,17 +79,17 @@ namespace GenericMessageProccessing.Core.Test.Unit
         }
 
 
-        public struct FakeAnalyticsMessage : IMessage { }
-        public struct FakeAnalyticsMessage2 : IMessage { }
+        public struct FakeMessage : IMessage { }
+        public struct FakeMessage2 : IMessage { }
 
         [Test]
-        public void Manafacture_CanManufactureCollection()
+        public void ManafactureCanManufactureCollection()
         {
             var factory = new MessageProcessorCollectionFactory(_log.Object);
             var processors = factory.Manafacture(_serviceLocator);
 
-            Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeAnalyticsMessage>)));
-            Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeAnalyticsMessage2>)));
+            Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeMessage>)));
+            Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeMessage2>)));
         }
     }
 }

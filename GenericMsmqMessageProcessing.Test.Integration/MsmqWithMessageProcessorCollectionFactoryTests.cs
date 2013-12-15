@@ -40,17 +40,38 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             }
         }
 
+        class MyMessageHandler2 : IMessageHandler<MyMessageForFactoryTesting>
+        {
+            public void HandleMessage(MyMessageForFactoryTesting message)
+            {
+                _iAlsoDoSomeWorkWithMyMessage.Object.DoWork(message);
+            }
+
+            public void OnError(MyMessageForFactoryTesting message, Exception ex)
+            {
+
+            }
+
+            public void Dispose()
+            {
+
+            }
+        }
+
         private AutoMoqer _mocker;
         private Mock<ILog> _logger;
         private IMessageProccessorCollection _messageProcessorCollection;
         private static Mock<IDoSomeWorkWithIMessage> _iDoSomeWorkWithMyMessage;
+        private static Mock<IDoSomeWorkWithIMessage> _iAlsoDoSomeWorkWithMyMessage;
             
         [SetUp]
         public void SetUp()
         {
             _mocker = new AutoMoqer();
             _logger = _mocker.GetMock<ILog>();
-            _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithIMessage>();
+            _iDoSomeWorkWithMyMessage =  new Mock<IDoSomeWorkWithIMessage>();
+            _iAlsoDoSomeWorkWithMyMessage =  new Mock<IDoSomeWorkWithIMessage>();
+
 
             _messageProcessorCollection = new MessageProcessorCollectionFactory(_logger.Object).Manufacture();
 
@@ -82,6 +103,9 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
             _iDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello")), Times.Once());
             _iDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello 2")), Times.Once());
+            
+            _iAlsoDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello")), Times.Once());
+            _iAlsoDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello 2")), Times.Once());
 
         }
     }

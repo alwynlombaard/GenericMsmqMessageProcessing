@@ -8,7 +8,7 @@ using GenericMsmqProcessing.Core.Queue;
 
 namespace GenericMsmqProcessing.Core.MessageProccessor
 {
-    public class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
+    public sealed class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
     {
         private readonly object _lock = new object();
         private bool _running;
@@ -18,7 +18,19 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         private readonly List<IMessageHandler<T>> _messageHandlers;
 
 
-        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IEnumerable<IMessageHandler<T>> messageHandlers)
+        public static IMessageProcessor Manufacture(IMessageQueueInbound<T> messageQueue,
+            IEnumerable<IMessageHandler<T>> messageHandlers)
+        {
+            return new MessageProcessor<T>(messageQueue, messageHandlers);
+        }
+
+        public static IMessageProcessor Manufacture(IMessageQueueInbound<T> messageQueue,
+            IMessageHandler<T> messageHandler)
+        {
+            return new MessageProcessor<T>(messageQueue, messageHandler);
+        }
+
+        private MessageProcessor(IMessageQueueInbound<T> messageQueue, IEnumerable<IMessageHandler<T>> messageHandlers)
         {
             _messageQueue = messageQueue;
             _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();
@@ -27,7 +39,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         }
         
         
-        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
+        private MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
         {
             _messageQueue = messageQueue;
             _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();
