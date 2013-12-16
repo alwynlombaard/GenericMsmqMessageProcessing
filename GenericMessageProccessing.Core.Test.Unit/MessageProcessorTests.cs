@@ -43,7 +43,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(false, true, false);
 
-            var msmqProcessor =  MessageProcessor<FakeMessage>.Manufacture(_messageQueue.Object, _messageHandler.Object);
+            var msmqProcessor =  new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
             msmqProcessor.Start();
             Thread.Sleep(100);
             msmqProcessor.Stop();
@@ -64,7 +64,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 _messageHandler2.Object
             };
             
-            var msmqProcessor = MessageProcessor<FakeMessage>.Manufacture(_messageQueue.Object, handlers);
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
             
             msmqProcessor.Start();
             Thread.Sleep(100);
@@ -81,7 +81,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(true, true, false, true, false);
 
-            var msmqProcessor = MessageProcessor<FakeMessage>.Manufacture(_messageQueue.Object, _messageHandler.Object);
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
             msmqProcessor.Start();
             Thread.Sleep(500);
             msmqProcessor.Stop();
@@ -102,7 +102,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 _messageHandler2.Object
             };
 
-            var msmqProcessor = MessageProcessor<FakeMessage>.Manufacture(_messageQueue.Object, handlers);
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
 
             msmqProcessor.Start();
             Thread.Sleep(100);
@@ -119,7 +119,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(true);
 
-            var msmqProcessor = MessageProcessor<FakeMessage>.Manufacture(_messageQueue.Object, _messageHandler.Object);
+            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
             msmqProcessor.Start();
             Thread.Sleep(500);
             msmqProcessor.Stop();

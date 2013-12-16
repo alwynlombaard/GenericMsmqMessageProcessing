@@ -36,8 +36,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
         [Test]
         public void ManufactureCanManufactureMessageProcessors()
         {
-            var factory = new MessageProcessorCollectionFactory(_log);
-            var processors = factory.Manufacture();
+            var processors = MessageProcessorCollectionFactory.Collection(_log);
 
             Assert.That(processors, Has.Some.AssignableFrom(typeof(MessageProcessor<MyFakeMessage>)));
         }

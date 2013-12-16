@@ -6,7 +6,6 @@ using GenericMsmqProcessing.Core.MessageProccessor;
 using GenericMsmqProcessing.Core.Queue;
 using log4net;
 using Microsoft.Practices.Unity;
-using Moq;
 using NUnit.Framework;
 
 namespace GenericMessageProccessing.Core.Test.Unit
@@ -60,7 +59,6 @@ namespace GenericMessageProccessing.Core.Test.Unit
         }
 
         private AutoMoqer _mocker;
-        private Mock<ILog> _log;
         private Func<Type, object> _serviceLocator;
 
         [SetUp]
@@ -73,7 +71,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 .RegisterType(typeof (IMessageQueueInbound<>), typeof (FakeQueue<>));
 
             _mocker = new AutoMoqer(testContainer);
-            _log = _mocker.GetMock<ILog>();
+            _mocker.GetMock<ILog>();
 
             _serviceLocator = type => _mocker.Create(type);
         }
@@ -85,8 +83,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
         [Test]
         public void ManafactureCanManufactureCollection()
         {
-            var factory = new MessageProcessorCollectionFactory(_log.Object);
-            var processors = factory.Manafacture(_serviceLocator);
+            var processors = MessageProcessorCollectionFactory.Collection(_serviceLocator);
 
             Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeMessage>)));
             Assert.That(processors, Has.Some.AssignableFrom(typeof (MessageProcessor<FakeMessage2>)));

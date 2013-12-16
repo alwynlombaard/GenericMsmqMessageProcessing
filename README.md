@@ -48,14 +48,11 @@ Start message processor(s) by using a factory.
 //if you have dependencies in your Handlers to be resolved,
 //pass in your container's Func<Type, object> serviceLocator 
 //for example Kernel.GetService or Container.Resolve
-var messageProcessorCollection = new MessageProcessorCollectionFactory(logger)
-								.Manufacture(Kernel.GetService);
+var messageProcessorCollection = MessageProcessorCollectionFactory.Collection(Kernel.GetService);
 
 //OR
 //if your handlers have parameterless ctors
-var messageProcessorCollection = new MessageProcessorCollectionFactory(logger)
-								.Manufacture();
-								
+var messageProcessorCollection = MessageProcessorCollectionFactory.Collection(logger);
 								
 messageProcessorCollection.StartAll();							
 
@@ -73,7 +70,7 @@ var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
 
 var messageHandler = new MyMessageHandler()
 
-var messageProcessor = MessageProcessor<MyMessage>.Manufacture( inboundMessageQueue, 
+var messageProcessor = new MessageProcessor<MyMessage>( inboundMessageQueue, 
 														messageHandler);
 
 messageProcessor.Start();

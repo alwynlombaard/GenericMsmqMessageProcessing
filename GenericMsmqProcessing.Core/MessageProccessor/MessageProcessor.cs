@@ -17,20 +17,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
         private readonly IMessageQueueInbound<T> _messageQueue;
         private readonly List<IMessageHandler<T>> _messageHandlers;
 
-
-        public static IMessageProcessor Manufacture(IMessageQueueInbound<T> messageQueue,
-            IEnumerable<IMessageHandler<T>> messageHandlers)
-        {
-            return new MessageProcessor<T>(messageQueue, messageHandlers);
-        }
-
-        public static IMessageProcessor Manufacture(IMessageQueueInbound<T> messageQueue,
-            IMessageHandler<T> messageHandler)
-        {
-            return new MessageProcessor<T>(messageQueue, messageHandler);
-        }
-
-        private MessageProcessor(IMessageQueueInbound<T> messageQueue, IEnumerable<IMessageHandler<T>> messageHandlers)
+        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IEnumerable<IMessageHandler<T>> messageHandlers)
         {
             _messageQueue = messageQueue;
             _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();
@@ -38,8 +25,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             Name = typeof(T).Name;
         }
         
-        
-        private MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
+        public MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
         {
             _messageQueue = messageQueue;
             _messageHandlers = Enumerable.Empty<IMessageHandler<T>>().ToList();

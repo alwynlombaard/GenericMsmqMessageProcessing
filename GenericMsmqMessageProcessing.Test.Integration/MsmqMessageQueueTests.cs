@@ -56,7 +56,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
           
             _messageHandler = new MyMessageHandler();
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests>(_logger.Object);
-            _messageProcessor = MessageProcessor<MyMessageForMsmqMessageQueueTests>.Manufacture(_inboundMessageQueue,
+            _messageProcessor = new MessageProcessor<MyMessageForMsmqMessageQueueTests>(_inboundMessageQueue,
                 _messageHandler);
 
             TestQueues.PurgeQueues();

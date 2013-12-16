@@ -73,7 +73,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _iAlsoDoSomeWorkWithMyMessage =  new Mock<IDoSomeWorkWithIMessage>();
 
 
-            _messageProcessorCollection = new MessageProcessorCollectionFactory(_logger.Object).Manufacture();
+            _messageProcessorCollection = MessageProcessorCollectionFactory.Collection(_logger.Object);
 
             TestQueues.PurgeQueues();
 
