@@ -35,14 +35,14 @@ class MyMessageHandler : IMessageHandler <MyMessage>
 
 	public void Dispose()
 	{
-		
+		//this is invoked after the message has been handled
+		...
 	}
 }
 ``` 
-At app start
+Only once, typically at app start, start message processor(s).
 
-Start message processor(s) by using a factory.
-
+By using a factory:
 
 ```C#
 //if you have dependencies in your Handlers to be resolved,
