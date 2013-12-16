@@ -17,7 +17,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
     [Category("Fast")]
     public class MessageProcessorTests
     {
-        public class FakeMessage : IMessage
+        public struct FakeMessage : IMessage
         {
 
         }

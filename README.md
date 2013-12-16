@@ -8,7 +8,7 @@ Usage
 Declare a message to process.
 
 ```C#
-class MyMessage : IMessage
+public struct MyMessage : IMessage
 {
 
 }

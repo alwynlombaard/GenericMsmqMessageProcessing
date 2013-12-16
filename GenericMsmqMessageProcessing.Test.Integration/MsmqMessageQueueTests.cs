@@ -11,7 +11,7 @@ using AutoMoq;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
-    public class MyMessageForMsmqMessageQueueTests : IMessage
+    public struct MyMessageForMsmqMessageQueueTests : IMessage
     {
         public string Message { get; set; }
     }
