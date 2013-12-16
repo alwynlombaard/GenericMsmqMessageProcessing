@@ -40,7 +40,8 @@ public class MyMessageHandler : IMessageHandler <MyMessage>
 	}
 }
 ``` 
-Only once, typically at app start, start message processor(s).
+
+####Only once, typically at app start, start message processor(s).####
 
 By using a factory:
 
@@ -63,7 +64,9 @@ To stop processors:
 messageProcessorCollection.StopAll();
 ```
 
-Or do it explicitly:
+**OR** 
+
+do it explicitly:
 
 ```C#
 var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
