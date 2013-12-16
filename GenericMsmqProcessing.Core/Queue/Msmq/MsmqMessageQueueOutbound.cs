@@ -1,4 +1,6 @@
-﻿using System.Messaging;
+﻿using System;
+using System.Messaging;
+using System.Transactions;
 
 namespace GenericMsmqProcessing.Core.Queue.Msmq
 {
@@ -13,18 +15,21 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
             _path = @".\private$\" + typeof(T).FullName;
             if (!MessageQueue.Exists(_path))
             {
-                MessageQueue.Create(_path, transactional: false);
+                MessageQueue.Create(_path, transactional: true);
             }
         }
 
         public void Send(T message)
         {
-
-            using (var queue = new MessageQueue(_path))
+            using (var scope = new TransactionScope())
             {
-                queue.DefaultPropertiesToSend.Recoverable = true;
-                queue.Formatter = _formatter;
-                queue.Send(message, MessageQueueTransactionType.Automatic);
+                using (var queue = new MessageQueue(_path))
+                {
+                    queue.DefaultPropertiesToSend.Recoverable = true;
+                    queue.Formatter = _formatter;
+                    queue.Send(message, MessageQueueTransactionType.Automatic);
+                }
+                scope.Complete();
             }
         }
     }

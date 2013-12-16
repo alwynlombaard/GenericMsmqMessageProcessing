@@ -18,7 +18,7 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
             _path = @".\private$\" + typeof(T).FullName;
             if (!MessageQueue.Exists(_path))
             {
-                MessageQueue.Create(_path, transactional: false);
+                MessageQueue.Create(_path, transactional: true);
             }
         }
 

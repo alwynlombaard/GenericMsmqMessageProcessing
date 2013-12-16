@@ -19,7 +19,7 @@ class MyMessage : IMessage
 Declare a handler for it.
 
 ```C#
-class MyMessageHandler : IMessageHandler <MyMessage>
+public class MyMessageHandler : IMessageHandler <MyMessage>
 {
 	public void HandleMessage(MyMessage message)
 	{
@@ -113,3 +113,4 @@ Bind<ILog>()
 });
 ```
 
+Msmq implementation based on https://github.com/michaellperry
