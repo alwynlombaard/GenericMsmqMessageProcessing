@@ -11,6 +11,7 @@ using AutoMoq;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
+    [Serializable]
     public struct MyMessageForMsmqMessageQueueTests : IMessage
     {
         public string Message { get; set; }
@@ -20,9 +21,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     [Category("Slow")]
     public class MsmqMessageQueueTests
     {
-       
-
-        class MyMessageHandler : IMessageHandler<MyMessageForMsmqMessageQueueTests>
+        public class MyMessageHandler : IMessageHandler<MyMessageForMsmqMessageQueueTests>
         {
             public void HandleMessage(MyMessageForMsmqMessageQueueTests message)
             {
@@ -31,12 +30,12 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
             public void OnError(MyMessageForMsmqMessageQueueTests message, Exception ex)
             {
-                
+
             }
 
             public void Dispose()
             {
-               
+
             }
         }
 
@@ -46,25 +45,25 @@ namespace GenericMsmqMessageProcessing.Test.Integration
         private MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests> _inboundMessageQueue;
         private IMessageProcessor _messageProcessor;
         private static Mock<IDoSomeWorkWithIMessage> _iDoSomeWorkWithMyMessage;
-            
+
         [SetUp]
         public void SetUp()
         {
             _mocker = new AutoMoqer();
             _logger = _mocker.GetMock<ILog>();
             _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithIMessage>();
-          
+
             _messageHandler = new MyMessageHandler();
             _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests>(_logger.Object);
             _messageProcessor = new MessageProcessor<MyMessageForMsmqMessageQueueTests>(_inboundMessageQueue,
                 _messageHandler);
 
-            TestQueues.PurgeQueues();
+            TestQueues.PurgeQueues(typeof(MyMessageForMsmqMessageQueueTests));
 
             _messageProcessor.Start();
         }
 
-       
+
 
         [TearDown]
         public void TearDown()

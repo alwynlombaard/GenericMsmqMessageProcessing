@@ -10,15 +10,14 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public static class MessageProcessorCollectionFactory
     {
+        private static volatile IMessageProcessorCollection _collection;
+        private static readonly object syncRoot = new Object();
+        private static readonly ILog logger = LogManager.GetLogger(typeof(MessageProcessorCollectionFactory));
 
-        private static volatile IMessageProccessorCollection _collection;
-        private static readonly object SyncRoot = new Object();
-
-
-        public static IMessageProccessorCollection Collection(Func<Type, object> serviceLocator)
+        public static IMessageProcessorCollection Collection(Func<Type, object> serviceLocator)
         {
-            if (_collection != null) {return _collection;}
-            lock (SyncRoot)
+            if (_collection != null) { return _collection; }
+            lock (syncRoot)
             {
                 if (_collection == null)
                 {
@@ -28,10 +27,10 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             return _collection;
         }
 
-        public static IMessageProccessorCollection Collection(ILog log)
+        public static IMessageProcessorCollection Collection(ILog log)
         {
-            if (_collection != null) {return _collection;}
-            lock (SyncRoot)
+            if (_collection != null) { return _collection; }
+            lock (syncRoot)
             {
                 if (_collection == null)
                 {
@@ -41,47 +40,54 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             return _collection;
         }
 
-        private static IMessageProccessorCollection FromServiceLocator(Func<Type, object> serviceLocator)
+        private static IMessageProcessorCollection FromServiceLocator(Func<Type, object> serviceLocator)
         {
-            var processors = new MessageProccessorCollection();
+            var processors = new MessageProcessorCollection();
 
             var messageTypes = GetMessageTypes();
             foreach (var messageType in messageTypes)
             {
-                var queueArgumentType = GetGenericType(typeof (IMessageQueueInbound<>), messageType);
+                var queueArgumentType = GetGenericType(typeof(IMessageQueueInbound<>), messageType);
                 var queueArgument = serviceLocator(queueArgumentType);
 
-                var handlersArgumentType = typeof (List<>).MakeGenericType(typeof (IMessageHandler<>).MakeGenericType(messageType));
+                var handlersArgumentType = typeof(List<>).MakeGenericType(typeof(IMessageHandler<>).MakeGenericType(messageType));
                 var handlersArgument = Activator.CreateInstance(handlersArgumentType);
 
-                var handlerImplementationTypes = GetMessageHandlerTypes(messageType);
+                var handlerImplementationTypes = GetMessageHandlerTypes(messageType).ToList();
                 foreach (var handlerImplementationType in handlerImplementationTypes)
                 {
                     var handler = serviceLocator(handlerImplementationType);
-                    handlersArgumentType.GetMethod("Add").Invoke(handlersArgument, new[] {handler});
+                    handlersArgumentType.GetMethod("Add").Invoke(handlersArgument, new[] { handler });
                 }
 
-                var processorType = GetGenericType(typeof (MessageProcessor<>), messageType);
+                if (!handlerImplementationTypes.Any())
+                {
+                    logger.WarnFormat("No handlers found for {0}, processor not created ", messageType.Name);
+                    continue;
+                }
+
+                var processorType = GetGenericType(typeof(MessageProcessor<>), messageType);
                 var processor =
-                    (IMessageProcessor) Activator.CreateInstance(processorType, queueArgument, handlersArgument);
+                    (IMessageProcessor)Activator.CreateInstance(processorType, queueArgument, handlersArgument);
 
                 processors.Add(processor);
+                logger.DebugFormat("Created processor for {0} with {1} handler(s)", messageType.Name, handlerImplementationTypes.Count());
             }
 
             return processors;
         }
 
-        private static IMessageProccessorCollection FromActivator(ILog log)
+        private static IMessageProcessorCollection FromActivator(ILog log)
         {
-            var processors = new MessageProccessorCollection();
+            var processors = new MessageProcessorCollection();
 
             var messageTypes = GetMessageTypes();
             foreach (var messageType in messageTypes)
             {
-                var queueArgumentType = GetGenericType(typeof (MsmqMessageQueueInbound<>), messageType);
+                var queueArgumentType = GetGenericType(typeof(MsmqMessageQueueInbound<>), messageType);
                 var queueArgument = Activator.CreateInstance(queueArgumentType, log);
 
-                var handlersArgumentType = typeof(List<>).MakeGenericType(typeof (IMessageHandler<>).MakeGenericType(messageType));
+                var handlersArgumentType = typeof(List<>).MakeGenericType(typeof(IMessageHandler<>).MakeGenericType(messageType));
                 var handlersArgument = Activator.CreateInstance(handlersArgumentType);
 
                 var handlerImplementationTypes = GetMessageHandlerTypes(messageType);
@@ -110,7 +116,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
 
         private static IEnumerable<Type> GetMessageHandlerTypes(Type messageType)
         {
-            var messageHandlerType = GetGenericType(typeof (IMessageHandler<>), messageType);
+            var messageHandlerType = GetGenericType(typeof(IMessageHandler<>), messageType);
             return (from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     from type in assembly.GetTypes()
                     let interfaces = type.GetInterfaces()

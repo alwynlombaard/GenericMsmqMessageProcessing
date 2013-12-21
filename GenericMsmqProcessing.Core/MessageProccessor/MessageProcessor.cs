@@ -5,11 +5,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.Queue;
+using log4net;
 
 namespace GenericMsmqProcessing.Core.MessageProccessor
 {
     public sealed class MessageProcessor<T> : IMessageProcessor<T> where T : IMessage
     {
+        // ReSharper disable once StaticFieldInGenericType
+        private static readonly ILog logger = LogManager.GetLogger("GenericMsmqProcessing");
         private readonly object _lock = new object();
         private bool _running;
         private Task _task;
@@ -24,7 +27,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             _messageHandlers.AddRange(messageHandlers);
             Name = typeof(T).Name;
         }
-        
+
         public MessageProcessor(IMessageQueueInbound<T> messageQueue, IMessageHandler<T> messageHandler)
         {
             _messageQueue = messageQueue;
@@ -42,6 +45,8 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
                 {
                     continue;
                 }
+                NumberOfMessagesPickedUp++;
+                var hasError = false;
                 foreach (var messageHandler in _messageHandlers)
                 {
                     using (messageHandler)
@@ -52,10 +57,16 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
                         }
                         catch (Exception handlerException)
                         {
+                            hasError = true;
                             messageHandler.OnError(message, handlerException);
                         }
                     }
                 }
+                if (hasError)
+                {
+                    NumberOfMessageErrors++;
+                }
+                logger.Debug("Handled " + typeof(T).Name);
             }
         }
 
@@ -81,6 +92,14 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             }
         }
 
+        public bool IsRunning()
+        {
+            return _running;
+        }
+
         public string Name { get; set; }
+        public int NumberOfMessagesPickedUp { get; set; }
+        public int NumberOfMessageErrors { get; set; }
     }
+
 }

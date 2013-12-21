@@ -8,7 +8,7 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
     {
         private readonly ILog _log;
         private readonly TimeSpan _timeout = TimeSpan.FromSeconds(5.0);
-        private readonly XmlMessageFormatter _formatter = new XmlMessageFormatter(new[] { typeof(T) });
+        private readonly IMessageFormatter _formatter = new BinaryMessageFormatter();
 
         private readonly string _path;
 

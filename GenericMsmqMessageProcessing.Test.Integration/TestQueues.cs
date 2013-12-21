@@ -6,14 +6,10 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 {
     public static class TestQueues
     {
-        public static void PurgeQueues()
+        public static void PurgeQueues(Type messageType)
         {
             var queues = MessageQueue.GetPrivateQueuesByMachine(".")
-                .Where(
-                    q => 
-                        q.QueueName.ToLowerInvariant().Contains(typeof (MyMessageForMsmqMessageQueueTests).Name.ToLowerInvariant())
-                        || q.QueueName.ToLowerInvariant().Contains(typeof (MyMessageForFactoryTesting).Name.ToLowerInvariant())
-                         || q.QueueName.ToLowerInvariant().Contains(typeof (MyFakeMessage).Name.ToLowerInvariant()));
+                .Where(q => q.QueueName.ToLowerInvariant().Contains(messageType.Name.ToLowerInvariant()));
 
             foreach (var queue in queues)
             {
@@ -28,6 +24,5 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             }
 
         }
-
     }
 }

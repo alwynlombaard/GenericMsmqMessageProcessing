@@ -7,6 +7,7 @@ using log4net;
 
 namespace GenericMsmqMessageProcessing.SampleApplication
 {
+    [Serializable]
     public struct MyMessage : IMessage
     {
         public int Id { get; set; }
@@ -53,9 +54,9 @@ namespace GenericMsmqMessageProcessing.SampleApplication
                     var message = new MyMessage { Id = i };
                     queue.Send(message);
                 }
-                catch
+                catch(Exception ex)
                 {
-                    Console.WriteLine("Error sending message");
+                    Console.WriteLine("Error sending message" + ex.StackTrace);
                 }
             }
 

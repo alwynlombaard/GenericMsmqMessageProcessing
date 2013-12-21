@@ -8,6 +8,7 @@ Usage
 Declare a message to process.
 
 ```C#
+[Serializable]
 public struct MyMessage : IMessage
 {
 

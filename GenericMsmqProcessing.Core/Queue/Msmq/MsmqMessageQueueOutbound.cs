@@ -1,13 +1,11 @@
-﻿using System;
-using System.Messaging;
+﻿using System.Messaging;
 using System.Transactions;
 
 namespace GenericMsmqProcessing.Core.Queue.Msmq
 {
     public class MsmqMessageQueueOutbound<T> : IMessageQueueOutbound<T>
     {
-        private readonly XmlMessageFormatter _formatter = new XmlMessageFormatter(new[] { typeof(T) });
-
+        private readonly IMessageFormatter _formatter = new BinaryMessageFormatter();
         private readonly string _path;
 
         public MsmqMessageQueueOutbound()

@@ -11,7 +11,7 @@ using AutoMoq;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
-
+    [Serializable]
     public struct MyMessageForFactoryTesting : IMessage
     {
         public string Message { get; set; }
@@ -31,12 +31,12 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
             public void OnError(MyMessageForFactoryTesting message, Exception ex)
             {
-                
+
             }
 
             public void Dispose()
             {
-               
+
             }
         }
 
@@ -60,26 +60,26 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
         private AutoMoqer _mocker;
         private Mock<ILog> _logger;
-        private IMessageProccessorCollection _messageProcessorCollection;
+        private IMessageProcessorCollection _messageProcessorCollection;
         private static Mock<IDoSomeWorkWithIMessage> _iDoSomeWorkWithMyMessage;
         private static Mock<IDoSomeWorkWithIMessage> _iAlsoDoSomeWorkWithMyMessage;
-            
+
         [SetUp]
         public void SetUp()
         {
             _mocker = new AutoMoqer();
             _logger = _mocker.GetMock<ILog>();
-            _iDoSomeWorkWithMyMessage =  new Mock<IDoSomeWorkWithIMessage>();
-            _iAlsoDoSomeWorkWithMyMessage =  new Mock<IDoSomeWorkWithIMessage>();
+            _iDoSomeWorkWithMyMessage = new Mock<IDoSomeWorkWithIMessage>();
+            _iAlsoDoSomeWorkWithMyMessage = new Mock<IDoSomeWorkWithIMessage>();
 
             _messageProcessorCollection = MessageProcessorCollectionFactory.Collection(_logger.Object);
 
-            TestQueues.PurgeQueues();
+            TestQueues.PurgeQueues(typeof(MyMessageForFactoryTesting));
 
             _messageProcessorCollection.StartAll();
         }
 
-       
+
 
         [TearDown]
         public void TearDown()
@@ -97,12 +97,12 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
             var message2 = new MyMessageForFactoryTesting { Message = "Hello 2" };
             queue.Send(message2);
-           
+
             Thread.Sleep(1000);
 
             _iDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello")), Times.Once());
             _iDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello 2")), Times.Once());
-            
+
             _iAlsoDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello")), Times.Once());
             _iAlsoDoSomeWorkWithMyMessage.Verify(x => x.DoWork(It.Is<MyMessageForFactoryTesting>(m => m.Message == "Hello 2")), Times.Once());
 

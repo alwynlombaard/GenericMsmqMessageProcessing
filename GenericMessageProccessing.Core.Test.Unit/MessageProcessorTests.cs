@@ -12,7 +12,6 @@ using NUnit.Framework;
 
 namespace GenericMessageProccessing.Core.Test.Unit
 {
-
     [TestFixture]
     [Category("Fast")]
     public class MessageProcessorTests
@@ -43,10 +42,10 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(false, true, false);
 
-            var msmqProcessor =  new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
-            msmqProcessor.Start();
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+            processor.Start();
             Thread.Sleep(100);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
         }
@@ -63,12 +62,12 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 _messageHandler.Object, 
                 _messageHandler2.Object
             };
-            
-            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
-            
-            msmqProcessor.Start();
+
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
+
+            processor.Start();
             Thread.Sleep(100);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
             _messageHandler2.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
@@ -81,10 +80,10 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(true, true, false, true, false);
 
-            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
-            msmqProcessor.Start();
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+            processor.Start();
             Thread.Sleep(500);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
         }
@@ -102,11 +101,11 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 _messageHandler2.Object
             };
 
-            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, handlers);
 
-            msmqProcessor.Start();
+            processor.Start();
             Thread.Sleep(100);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
             _messageHandler2.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(3));
@@ -119,21 +118,105 @@ namespace GenericMessageProccessing.Core.Test.Unit
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
                .ReturnsInOrder(true);
 
-            var msmqProcessor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
-            msmqProcessor.Start();
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+            processor.Start();
             Thread.Sleep(500);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Once());
 
             _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
               .ReturnsInOrder(true);
 
-            msmqProcessor.Start();
+            processor.Start();
             Thread.Sleep(500);
-            msmqProcessor.Stop();
+            processor.Stop();
 
             _messageHandler.Verify(h => h.HandleMessage(_fakeMessage), Times.Exactly(2));
+        }
+
+        [Test]
+        public void MessageProcessorIncrementsNumberOfMessagesPickedUp()
+        {
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+              .ReturnsInOrder(true, false, true, false, true, false, false, false);
+
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+
+            Assert.That(processor.NumberOfMessagesPickedUp, Is.EqualTo(0));
+
+            processor.Start();
+            Thread.Sleep(500);
+            processor.Stop();
+
+            Assert.That(processor.NumberOfMessagesPickedUp, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void MessageProcessorIsRunningIsSetCorrectly()
+        {
+            var processor1 = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+            var processor2 = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+
+            Assert.That(processor1.IsRunning(), Is.False);
+            Assert.That(processor2.IsRunning(), Is.False);
+
+            processor1.Start();
+
+            Assert.That(processor1.IsRunning(), Is.True);
+            Assert.That(processor2.IsRunning(), Is.False);
+
+            processor2.Start();
+
+            Assert.That(processor1.IsRunning(), Is.True);
+            Assert.That(processor2.IsRunning(), Is.True);
+
+            processor1.Stop();
+
+            Assert.That(processor1.IsRunning(), Is.False);
+            Assert.That(processor2.IsRunning(), Is.True);
+
+            processor2.Stop();
+
+            Assert.That(processor1.IsRunning(), Is.False);
+            Assert.That(processor2.IsRunning(), Is.False);
+        }
+
+        [Test]
+        public void MessageProcessorInvokesHandlerOnErrorWhenHandlerThrows()
+        {
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+             .ReturnsInOrder(true);
+
+            _messageHandler.Setup(h => h.HandleMessage(It.IsAny<FakeMessage>())).Throws(new Exception("hello error"));
+
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+            processor.Start();
+            Thread.Sleep(500);
+            processor.Stop();
+
+            _messageHandler.Verify(h => h.OnError(_fakeMessage, It.Is<Exception>(ex => ex.Message == "hello error")), Times.Once());
+
+        }
+
+        [Test]
+        public void MessageProcessorIncrementsNumberOfMessageErrors()
+        {
+            _messageQueue.Setup(x => x.TryReceive(out _fakeMessage))
+            .ReturnsInOrder(true);
+
+            _messageHandler.Setup(h => h.HandleMessage(It.IsAny<FakeMessage>())).Throws<Exception>();
+
+            var processor = new MessageProcessor<FakeMessage>(_messageQueue.Object, _messageHandler.Object);
+
+            Assert.That(processor.NumberOfMessageErrors, Is.EqualTo(0));
+
+            processor.Start();
+            Thread.Sleep(500);
+            processor.Stop();
+
+            Assert.That(processor.NumberOfMessageErrors, Is.EqualTo(1));
+
         }
     }
 
@@ -154,8 +237,8 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 {
                     throw result as Exception;
                 }
-                return (TResult) result;
-            });    
+                return (TResult)result;
+            });
         }
     }
 }

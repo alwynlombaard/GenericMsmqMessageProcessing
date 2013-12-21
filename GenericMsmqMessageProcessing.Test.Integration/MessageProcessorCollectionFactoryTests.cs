@@ -8,12 +8,12 @@ using NUnit.Framework;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
 {
-    public struct MyFakeMessage : IMessage{}
+    public struct MyFakeMessage : IMessage { }
 
     public class MyFakeMessageHandler : IMessageHandler<MyFakeMessage>
     {
-        public void HandleMessage(MyFakeMessage message){}
-        public void OnError(MyFakeMessage message, Exception ex){}
+        public void HandleMessage(MyFakeMessage message) { }
+        public void OnError(MyFakeMessage message, Exception ex) { }
         public void Dispose() { }
     }
 
@@ -23,7 +23,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     {
         private AutoMoqer _mocker;
         private ILog _log;
-        
+
         [SetUp]
         public void SetUp()
         {
@@ -31,7 +31,7 @@ namespace GenericMsmqMessageProcessing.Test.Integration
             _log = _mocker.GetMock<ILog>().Object;
         }
 
-       
+
 
         [Test]
         public void ManufactureCanManufactureMessageProcessors()
