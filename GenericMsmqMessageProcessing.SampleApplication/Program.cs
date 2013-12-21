@@ -3,7 +3,6 @@ using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
 using GenericMsmqProcessing.Core.Queue.Msmq;
-using log4net;
 
 namespace GenericMsmqMessageProcessing.SampleApplication
 {
@@ -42,8 +41,7 @@ namespace GenericMsmqMessageProcessing.SampleApplication
 
         static void Main()
         {
-            var logger = LogManager.GetLogger("logger");
-            var messageProcessorCollection = MessageProcessorCollectionFactory.Collection(logger);
+            var messageProcessorCollection = MessageProcessorCollectionFactory.Collection();
             messageProcessorCollection.StartAll();
 
             for (var i = 1; i <= 100; i++)

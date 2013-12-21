@@ -54,7 +54,7 @@ var messageProcessorCollection = MessageProcessorCollectionFactory.Collection(Ke
 
 //OR
 //if your handlers have parameterless ctors
-var messageProcessorCollection = MessageProcessorCollectionFactory.Collection(logger);
+var messageProcessorCollection = MessageProcessorCollectionFactory.Collection();
 								
 messageProcessorCollection.StartAll();							
 
@@ -70,7 +70,7 @@ messageProcessorCollection.StopAll();
 do it explicitly:
 
 ```C#
-var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>(logger);
+var inboundMessageQueue = new MsmqMessageQueueInbound<MyMessage>();
 
 var messageHandler = new MyMessageHandler()
 
@@ -101,20 +101,5 @@ try
 }
 catch (Exception ex)...
 ``` 
-
-###Container setup###
-
-Ninject example bindings for MsmqMessageQueueInbound dependency.
-
-```C#
-Bind<ILog>()
-.ToMethod(x =>
-{
-	var type = x.Request.ParentRequest != null 
-		? x.Request.ParentRequest.Service 
-		: x.Request.Service;
-	return LogManager.GetLogger(type);
-});
-```
 
 Msmq implementation based on https://github.com/michaellperry

@@ -1,9 +1,7 @@
 ﻿using System;
-using AutoMoq;
 using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
-using log4net;
 using NUnit.Framework;
 
 namespace GenericMsmqMessageProcessing.Test.Integration
@@ -21,22 +19,16 @@ namespace GenericMsmqMessageProcessing.Test.Integration
     [Category("Slow")]
     public class MessageProcessorCollectionFactoryTests
     {
-        private AutoMoqer _mocker;
-        private ILog _log;
-
         [SetUp]
         public void SetUp()
         {
-            _mocker = new AutoMoqer();
-            _log = _mocker.GetMock<ILog>().Object;
+           
         }
-
-
 
         [Test]
         public void ManufactureCanManufactureMessageProcessors()
         {
-            var processors = MessageProcessorCollectionFactory.Collection(_log);
+            var processors = MessageProcessorCollectionFactory.Collection();
 
             Assert.That(processors, Has.Some.AssignableFrom(typeof(MessageProcessor<MyFakeMessage>)));
         }

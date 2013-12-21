@@ -6,15 +6,15 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
 {
     public class MsmqMessageQueueInbound<T> : IMessageQueueInbound<T>
     {
-        private readonly ILog _log;
+        // ReSharper disable once StaticFieldInGenericType
+        private static readonly ILog log = LogManager.GetLogger("GenericMsmqProcessing");
         private readonly TimeSpan _timeout = TimeSpan.FromSeconds(5.0);
         private readonly IMessageFormatter _formatter = new BinaryMessageFormatter();
 
         private readonly string _path;
 
-        public MsmqMessageQueueInbound(ILog log)
+        public MsmqMessageQueueInbound()
         {
-            _log = log;
             _path = @".\private$\" + typeof(T).FullName;
             if (!MessageQueue.Exists(_path))
             {
@@ -43,14 +43,14 @@ namespace GenericMsmqProcessing.Core.Queue.Msmq
             {
                 if (ex.MessageQueueErrorCode != MessageQueueErrorCode.IOTimeout)
                 {
-                    _log.Error("MessageQueue receiving error", ex);    
+                    log.Error("MessageQueue receiving error", ex);    
                 }
                 message = default(T);
                 return false;
             }
             catch(Exception ex)
             {
-                _log.Error(typeof(T).Name +  ": Error receiving message ", ex);    
+                log.Error(typeof(T).Name +  ": Error receiving message ", ex);    
                 message = default(T);
                 return false;
             }

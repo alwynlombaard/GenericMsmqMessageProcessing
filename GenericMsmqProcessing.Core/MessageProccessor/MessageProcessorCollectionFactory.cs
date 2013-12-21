@@ -12,7 +12,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
     {
         private static volatile IMessageProcessorCollection _collection;
         private static readonly object syncRoot = new Object();
-        private static readonly ILog logger = LogManager.GetLogger(typeof(MessageProcessorCollectionFactory));
+        private static readonly ILog logger = LogManager.GetLogger("GenericMsmqProcessing");
 
         public static IMessageProcessorCollection Collection(Func<Type, object> serviceLocator)
         {
@@ -27,14 +27,14 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             return _collection;
         }
 
-        public static IMessageProcessorCollection Collection(ILog log)
+        public static IMessageProcessorCollection Collection()
         {
             if (_collection != null) { return _collection; }
             lock (syncRoot)
             {
                 if (_collection == null)
                 {
-                    _collection = FromActivator(log);
+                    _collection = FromActivator();
                 }
             }
             return _collection;
@@ -77,7 +77,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             return processors;
         }
 
-        private static IMessageProcessorCollection FromActivator(ILog log)
+        private static IMessageProcessorCollection FromActivator()
         {
             var processors = new MessageProcessorCollection();
 
@@ -85,7 +85,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
             foreach (var messageType in messageTypes)
             {
                 var queueArgumentType = GetGenericType(typeof(MsmqMessageQueueInbound<>), messageType);
-                var queueArgument = Activator.CreateInstance(queueArgumentType, log);
+                var queueArgument = Activator.CreateInstance(queueArgumentType);
 
                 var handlersArgumentType = typeof(List<>).MakeGenericType(typeof(IMessageHandler<>).MakeGenericType(messageType));
                 var handlersArgument = Activator.CreateInstance(handlersArgumentType);

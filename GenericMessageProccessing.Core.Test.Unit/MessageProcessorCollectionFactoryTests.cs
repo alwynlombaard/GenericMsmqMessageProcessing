@@ -4,9 +4,7 @@ using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
 using GenericMsmqProcessing.Core.Queue;
-using log4net;
 using Microsoft.Practices.Unity;
-using Moq;
 using NUnit.Framework;
 
 namespace GenericMessageProccessing.Core.Test.Unit
@@ -61,8 +59,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
 
         private AutoMoqer _mocker;
         private Func<Type, object> _serviceLocator;
-        private Mock<ILog> _log;
-
+  
         [SetUp]
         public void SetUp()
         {
@@ -73,8 +70,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
                 .RegisterType(typeof(IMessageQueueInbound<>), typeof(FakeQueue<>));
 
             _mocker = new AutoMoqer(testContainer);
-            _log = _mocker.GetMock<ILog>();
-
+  
             _serviceLocator = type => _mocker.Create(type);
         }
 
@@ -96,7 +92,7 @@ namespace GenericMessageProccessing.Core.Test.Unit
         {
             var processors = MessageProcessorCollectionFactory.Collection(_serviceLocator);
             var processors2 = MessageProcessorCollectionFactory.Collection(_serviceLocator);
-            var processors3 = MessageProcessorCollectionFactory.Collection(_log.Object);
+            var processors3 = MessageProcessorCollectionFactory.Collection();
 
             Assert.That(processors2, Is.SameAs(processors));
             Assert.That(processors3, Is.SameAs(processors));

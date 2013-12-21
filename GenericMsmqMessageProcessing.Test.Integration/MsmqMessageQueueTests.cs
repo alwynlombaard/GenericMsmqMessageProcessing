@@ -4,7 +4,6 @@ using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
 using GenericMsmqProcessing.Core.Queue.Msmq;
-using log4net;
 using Moq;
 using NUnit.Framework;
 using AutoMoq;
@@ -41,7 +40,6 @@ namespace GenericMsmqMessageProcessing.Test.Integration
 
         private AutoMoqer _mocker;
         private MyMessageHandler _messageHandler;
-        private Mock<ILog> _logger;
         private MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests> _inboundMessageQueue;
         private IMessageProcessor _messageProcessor;
         private static Mock<IDoSomeWorkWithIMessage> _iDoSomeWorkWithMyMessage;
@@ -50,11 +48,10 @@ namespace GenericMsmqMessageProcessing.Test.Integration
         public void SetUp()
         {
             _mocker = new AutoMoqer();
-            _logger = _mocker.GetMock<ILog>();
             _iDoSomeWorkWithMyMessage = _mocker.GetMock<IDoSomeWorkWithIMessage>();
 
             _messageHandler = new MyMessageHandler();
-            _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests>(_logger.Object);
+            _inboundMessageQueue = new MsmqMessageQueueInbound<MyMessageForMsmqMessageQueueTests>();
             _messageProcessor = new MessageProcessor<MyMessageForMsmqMessageQueueTests>(_inboundMessageQueue,
                 _messageHandler);
 
