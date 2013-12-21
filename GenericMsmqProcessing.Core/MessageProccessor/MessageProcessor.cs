@@ -45,7 +45,11 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
                 {
                     continue;
                 }
+                
+                logger.Debug("Dequeued message of type " + typeof(T).Name);
+                
                 NumberOfMessagesPickedUp++;
+               
                 var hasError = false;
                 foreach (var messageHandler in _messageHandlers)
                 {
@@ -66,7 +70,7 @@ namespace GenericMsmqProcessing.Core.MessageProccessor
                 {
                     NumberOfMessageErrors++;
                 }
-                logger.Debug("Handled " + typeof(T).Name);
+               
             }
         }
 

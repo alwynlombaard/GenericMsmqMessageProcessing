@@ -3,6 +3,7 @@ using GenericMsmqProcessing.Core;
 using GenericMsmqProcessing.Core.MessageHandler;
 using GenericMsmqProcessing.Core.MessageProccessor;
 using GenericMsmqProcessing.Core.Queue.Msmq;
+using log4net;
 
 namespace GenericMsmqMessageProcessing.SampleApplication
 {
@@ -14,20 +15,20 @@ namespace GenericMsmqMessageProcessing.SampleApplication
 
     public class MyMessageHandler : IMessageHandler<MyMessage>
     {
-        public void HandleMessage(MyMessage message)
+       public void HandleMessage(MyMessage message)
         {
             //handle your message here
-            Console.WriteLine("HandleMessage " + message.Id);
-            if (message.Id % 10 == 0)
+            Program.Logger.InfoFormat("HandleMessage: handling message {0}", message.Id);
+            if (message.Id % 3 == 0)
             {
-                throw new Exception("Bad things happened when handling message " + message.Id);
+                throw new Exception("Simulated exception for message  " + message.Id);
             }
         }
 
         public void OnError(MyMessage message, Exception ex)
         {
             //handle your errors here
-            Console.WriteLine(ex.Message);
+            Program.Logger.Warn("OnError: Handled exception for message " + message.Id,   ex);
         }
 
         public void Dispose()
@@ -38,29 +39,50 @@ namespace GenericMsmqMessageProcessing.SampleApplication
 
     public class Program
     {
+        public static readonly ILog Logger = LogManager.GetLogger("GenericMsmqMessageProcessing.SampleApplication");
+
+        static Program()
+        {
+            LoggingConfiguration.Configure();
+        }
 
         static void Main()
         {
+            Logger.InfoFormat("Queueing test messages...{0}", Environment.NewLine);
+            QueueMessages();
+
+            Logger.InfoFormat("Starting message processors...{0}", Environment.NewLine);
             var messageProcessorCollection = MessageProcessorCollectionFactory.Collection();
             messageProcessorCollection.StartAll();
+            
+            Console.ReadKey();
+            messageProcessorCollection.StopAll();
+        }
 
-            for (var i = 1; i <= 100; i++)
+        private static void QueueMessages()
+        {
+            for (var i = 1; i <= 4; i++)
             {
                 try
                 {
+                    Logger.InfoFormat("Queueing message {0}", i);
                     var queue = new MsmqMessageQueueOutbound<MyMessage>();
-                    var message = new MyMessage { Id = i };
+                    var message = new MyMessage {Id = i};
                     queue.Send(message);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Error sending message" + ex.StackTrace);
+                    Logger.Error("Error queueing message " + i, ex);
                 }
             }
+        }
 
-            Console.ReadLine();
-            messageProcessorCollection.StopAll();
-
+        static class LoggingConfiguration
+        {
+            public static void Configure()
+            {
+                log4net.Config.XmlConfigurator.Configure();
+            }
         }
     }
 }
