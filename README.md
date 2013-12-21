@@ -42,7 +42,7 @@ public class MyMessageHandler : IMessageHandler <MyMessage>
 }
 ``` 
 
-####Only once, typically at app start, start message processor(s).####
+####Start message processor(s).####
 
 By using a factory:
 
