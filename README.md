@@ -15,9 +15,26 @@ public struct MyMessage : IMessage
 }
 ``` 
 
+###Client###
+
+Send messages.
+
+```C#
+...
+try
+{
+	var queue = new MsmqMessageQueueOutbound<MyMessage>();
+	var message = new MyMessage();
+	queue.Send(message);
+}
+catch (Exception ex)...
+``` 
+
+
+
 ###Server###
 
-Declare a handler for it.
+Declare a handler for messages.
 
 ```C#
 public class MyMessageHandler : IMessageHandler <MyMessage>
@@ -87,19 +104,11 @@ messageProcessor.Stop();
 ```
 
 
-###Client###
 
-Add a message to the queue.
+*Msmq implementation based on https://github.com/michaellperry
 
-```C#
-...
-try
-{
-	var queue = new MsmqMessageQueueOutbound<MyMessage>();
-	var message = new MyMessage();
-	queue.Send(message);
-}
-catch (Exception ex)...
-``` 
 
-Msmq implementation based on https://github.com/michaellperry
+###Get it###
+from Nuget: PM> Install-Package GenericMsmqProcessing.Core
+
+

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>0.0.1</version>
+    <title>Generic Msmq processing</title>
+    <authors>Alwyn Lombaard</authors>
+    <owners>Alwyn Lombaard</owners>
+    <projectUrl>https://github.com/alwynlombaard/GenericMsmqMessageProcessing/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Generic Msmq message processing</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags></tags>
+  </metadata>
+</package>
